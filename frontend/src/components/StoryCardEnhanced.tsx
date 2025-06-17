@@ -25,6 +25,20 @@ interface StoryCardEnhancedProps {
 }
 
 export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
+  // Gallery images for fallbacks
+  const galleryImages = Array.from({length: 54}, (_, i) => `/gallery/Photo${i + 1}.jpg`);
+  
+  // Function to get a stable fallback image for each storyteller
+  const getFallbackImage = (storytellerId: string) => {
+    const hash = storytellerId.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    const index = Math.abs(hash) % galleryImages.length;
+    return galleryImages[index];
+  };
+
+  const imageToShow = story.profileImage || getFallbackImage(story.id);
   return (
     <div
         style={{
@@ -47,6 +61,18 @@ export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
           e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)';
         }}
       >
+        <img 
+          src={imageToShow} 
+          alt={story.name}
+          style={{
+            width: '100%',
+            height: '200px',
+            objectFit: 'cover',
+            borderRadius: '12px',
+            marginBottom: '16px'
+          }}
+        />
+        
         <h3 style={{ 
           color: '#19466C', 
           marginBottom: '8px',
