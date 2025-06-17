@@ -32,8 +32,26 @@ export default async function EnhancedStoriesPage() {
                 background: 'white',
                 padding: '1.5rem',
                 borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                display: 'flex',
+                flexDirection: 'column'
               }}>
+                {story.profileImage && (
+                  <img 
+                    src={story.profileImage} 
+                    alt={story.name}
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                      marginBottom: '1rem'
+                    }}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                )}
                 <h3 style={{ color: '#19466C', marginBottom: '0.5rem' }}>
                   {story.storyTitle || `${story.name}'s Story`}
                 </h3>

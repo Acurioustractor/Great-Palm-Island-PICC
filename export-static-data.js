@@ -30,6 +30,21 @@ async function exportStaticData() {
       const data = JSON.parse(storyteller.data || '{}');
       const tags = JSON.parse(storyteller.tags || '[]');
       const mediaUrls = JSON.parse(storyteller.media_urls || '[]');
+      
+      // Extract profile image from metadata
+      let profileImage = null;
+      if (data['File Profile Image'] && data['File Profile Image'][0]) {
+        const imageData = data['File Profile Image'][0];
+        profileImage = imageData.url;
+        
+        // Try to convert to local path if exists
+        if (imageData.filename) {
+          const localPath = `/gallery/${imageData.filename}`;
+          if (fs.existsSync(path.join(__dirname, 'frontend/public', localPath))) {
+            profileImage = localPath;
+          }
+        }
+      }
 
       return {
         id: storyteller.id,
@@ -41,6 +56,7 @@ async function exportStaticData() {
         storyContent: storyteller.story_content || '',
         themes: storyteller.themes || '',
         tags: tags,
+        profileImage: profileImage,
         mediaUrls: mediaUrls.map(url => {
           // Convert Airtable URLs to local paths if they exist
           if (url && url.includes('airtableusercontent.com')) {
@@ -54,8 +70,8 @@ async function exportStaticData() {
           return url;
         }),
         dateRecorded: storyteller.date_recorded,
-        organization: storyteller.organization,
-        role: storyteller.role,
+        organization: storyteller.organization || '',
+        role: storyteller.role || '',
         metadata: data
       };
     } catch (error) {

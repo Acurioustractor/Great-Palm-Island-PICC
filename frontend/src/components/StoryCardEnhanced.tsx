@@ -12,6 +12,7 @@ interface Storyteller {
   storyContent: string;
   themes: string;
   tags: string[];
+  profileImage: string | null;
   mediaUrls: string[];
   dateRecorded: string;
   organization: string;
