@@ -1,10 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { Story } from '@/lib/apiEnhanced';
+
+interface Storyteller {
+  id: string;
+  name: string;
+  bio: string;
+  location: string;
+  project: string;
+  storyTitle: string;
+  storyContent: string;
+  themes: string;
+  tags: string[];
+  mediaUrls: string[];
+  dateRecorded: string;
+  organization: string;
+  role: string;
+  metadata: any;
+}
 
 interface StoryCardEnhancedProps {
-  story: Story;
+  story: Storyteller;
 }
 
 export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
@@ -36,7 +52,7 @@ export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
           fontSize: '1.25rem',
           fontWeight: 700,
         }}>
-          {story.title || 'Untitled Story'}
+          {story.storyTitle || 'Untitled Story'}
         </h3>
         
         <p style={{ 
@@ -45,7 +61,7 @@ export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
           marginBottom: '12px',
           fontWeight: 600,
         }}>
-          by {story.storytellerName}
+          by {story.name}
         </p>
 
         <p style={{
@@ -55,7 +71,7 @@ export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
           marginBottom: '16px',
           flex: 1,
         }}>
-          {story.content.substring(0, 150)}...
+          {story.storyContent && story.storyContent.length > 0 ? story.storyContent.substring(0, 150) + '...' : 'No story content available.'}
         </p>
 
         <div style={{ 
@@ -88,7 +104,7 @@ export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
           )}
         </div>
 
-        {story.tags.length > 0 && (
+        {story.tags && story.tags.length > 0 && (
           <div style={{ 
             display: 'flex', 
             gap: '8px',
@@ -124,7 +140,7 @@ export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
           marginTop: '16px',
         }}>
           <Link
-            href={`/profiles/${story.storytellerId}`}
+            href={`/profiles/${story.id}`}
             style={{
               background: '#19466C',
               color: '#F8F5F0',
@@ -142,7 +158,7 @@ export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
             View Profile
           </Link>
           <Link
-            href={`/stories/${story.id}`}
+            href={`/stories-enhanced/${story.id}`}
             style={{
               background: '#227D51',
               color: '#F8F5F0',
