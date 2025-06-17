@@ -3,6 +3,7 @@ import Image from 'next/image';
 import styles from '@/styles/shared.module.css';
 import videoStyles from '@/styles/videos.module.css';
 import { StaticApi } from '@/lib/staticApi';
+import { ProfileImage } from '@/components/ProfileImage';
 
 interface Storyteller {
   id: string;
@@ -94,6 +95,17 @@ export default async function VideosPage() {
                   url && (url.includes('descript.com') || url.includes('.mp4') || url.includes('video'))
                 );
                 const displayName = video.name;
+                
+                // Use a deterministic fallback based on storyteller ID
+                const getFallbackImage = (id: string) => {
+                  const hash = id.split('').reduce((acc, char) => {
+                    return char.charCodeAt(0) + ((acc << 5) - acc);
+                  }, 0);
+                  const imageIndex = (Math.abs(hash) % 54) + 1;
+                  return `/gallery/Photo${imageIndex}.jpg`;
+                };
+                
+                const thumbnailUrl = video.profileImage || getFallbackImage(video.id);
 
                 return (
                   <Link 
@@ -104,14 +116,13 @@ export default async function VideosPage() {
                     <div className={videoStyles.videoCard}>
                       {/* Video Thumbnail */}
                       <div className={videoStyles.videoThumbnail}>
-                        {video.profileImage && (
-                          <Image
-                            src={video.profileImage}
-                            alt={displayName}
-                            fill
-                            style={{ objectFit: 'cover' }}
-                          />
-                        )}
+                        <ProfileImage
+                          src={thumbnailUrl}
+                          alt={displayName}
+                          fallbackSrc={getFallbackImage(video.id)}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                        />
                         
                         {/* Play button overlay */}
                         <div className={videoStyles.playButton}>

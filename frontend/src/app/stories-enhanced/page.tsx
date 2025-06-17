@@ -1,5 +1,6 @@
 import sharedStyles from '@/styles/shared.module.css';
 import { StaticApi } from '@/lib/staticApi';
+import { StoriesEnhancedGrid } from '@/components/StoriesEnhancedGrid';
 
 export default async function EnhancedStoriesPage() {
   try {
@@ -21,52 +22,7 @@ export default async function EnhancedStoriesPage() {
         <div className={sharedStyles.container}>
           <p>Found {storytellers.length} storytellers</p>
           
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: '2rem',
-            marginTop: '2rem'
-          }}>
-            {storytellers.slice(0, 6).map((story) => (
-              <div key={story.id} style={{
-                background: 'white',
-                padding: '1.5rem',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
-                {story.profileImage && (
-                  <img 
-                    src={story.profileImage} 
-                    alt={story.name}
-                    style={{
-                      width: '100%',
-                      height: '200px',
-                      objectFit: 'cover',
-                      borderRadius: '8px',
-                      marginBottom: '1rem'
-                    }}
-                  />
-                )}
-                <h3 style={{ color: '#19466C', marginBottom: '0.5rem' }}>
-                  {story.storyTitle || `${story.name}'s Story`}
-                </h3>
-                <p style={{ color: '#227D51', fontWeight: 600, marginBottom: '1rem' }}>
-                  by {story.name}
-                </p>
-                <p style={{ color: '#555', lineHeight: 1.6 }}>
-                  {story.storyContent ? 
-                    (story.storyContent.length > 100 ? 
-                      story.storyContent.substring(0, 100) + '...' : 
-                      story.storyContent
-                    ) : 
-                    story.bio
-                  }
-                </p>
-              </div>
-            ))}
-          </div>
+          <StoriesEnhancedGrid storytellers={storytellers} />
         </div>
       </>
     );

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ProfileImage } from './ProfileImage';
 
 interface Storyteller {
   id: string;
@@ -25,6 +26,17 @@ interface StoryCardEnhancedProps {
 }
 
 export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
+  // Use a deterministic fallback based on storyteller ID
+  const getFallbackImage = (id: string) => {
+    const hash = id.split('').reduce((acc, char) => {
+      return char.charCodeAt(0) + ((acc << 5) - acc);
+    }, 0);
+    const imageIndex = (Math.abs(hash) % 54) + 1;
+    return `/gallery/Photo${imageIndex}.jpg`;
+  };
+
+  const imageUrl = story.profileImage || getFallbackImage(story.id);
+
   return (
     <div
         style={{
@@ -47,19 +59,18 @@ export function StoryCardEnhanced({ story }: StoryCardEnhancedProps) {
           e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)';
         }}
       >
-        {story.profileImage && (
-          <img 
-            src={story.profileImage} 
-            alt={story.name}
-            style={{
-              width: '100%',
-              height: '200px',
-              objectFit: 'cover',
-              borderRadius: '12px',
-              marginBottom: '16px'
-            }}
-          />
-        )}
+        <ProfileImage
+          src={imageUrl}
+          alt={story.name}
+          fallbackSrc={getFallbackImage(story.id)}
+          style={{
+            width: '100%',
+            height: '200px',
+            objectFit: 'cover',
+            borderRadius: '12px',
+            marginBottom: '16px'
+          }}
+        />
         
         <h3 style={{ 
           color: '#19466C', 
