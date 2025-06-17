@@ -112,10 +112,6 @@ export default async function VideosPage() {
                           alt={displayName}
                           fill
                           style={{ objectFit: 'cover' }}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = fallbackImage;
-                          }}
                         />
                         
                         {/* Play button overlay */}

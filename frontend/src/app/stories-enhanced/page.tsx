@@ -47,9 +47,6 @@ export default async function EnhancedStoriesPage() {
                       borderRadius: '8px',
                       marginBottom: '1rem'
                     }}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
                   />
                 )}
                 <h3 style={{ color: '#19466C', marginBottom: '0.5rem' }}>
