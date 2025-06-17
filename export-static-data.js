@@ -33,13 +33,13 @@ async function exportStaticData() {
 
       return {
         id: storyteller.id,
-        name: storyteller.name,
-        bio: storyteller.bio,
-        location: storyteller.location,
-        project: storyteller.project,
-        storyTitle: storyteller.story_title,
-        storyContent: storyteller.story_content,
-        themes: storyteller.themes,
+        name: storyteller.name || '',
+        bio: storyteller.bio || '',
+        location: storyteller.location || '',
+        project: storyteller.project || '',
+        storyTitle: storyteller.story_title || '',
+        storyContent: storyteller.story_content || '',
+        themes: storyteller.themes || '',
         tags: tags,
         mediaUrls: mediaUrls.map(url => {
           // Convert Airtable URLs to local paths if they exist
