@@ -6,11 +6,13 @@ export default async function StoriesPage() {
   const storiesResult = await StaticApi.getStorytellers();
   const allStorytellers = storiesResult.data;
   
-  // Filter for Palm Island storytellers
+  // Filter for Palm Island storytellers who have profile images
   const palmIslandStorytellers = allStorytellers.filter(storyteller => 
-    storyteller.location === 'Palm Island' || 
-    storyteller.project?.toLowerCase().includes('palm island') ||
-    !storyteller.location // If no location specified, assume Palm Island
+    storyteller.profileImage && ( // Only include those with profile images
+      storyteller.location === 'Palm Island' || 
+      storyteller.project?.toLowerCase().includes('palm island') ||
+      !storyteller.location // If no location specified, assume Palm Island
+    )
   );
 
   return (

@@ -26,15 +26,10 @@ interface StorytellerCardProps {
 }
 
 export function StorytellerCard({ storyteller }: StorytellerCardProps) {
-  const getFallbackImage = (id: string) => {
-    const hash = id.split('').reduce((acc, char) => {
-      return char.charCodeAt(0) + ((acc << 5) - acc);
-    }, 0);
-    const imageIndex = (Math.abs(hash) % 54) + 1;
-    return `/gallery/Photo${imageIndex}.jpg`;
-  };
-  
-  const imageUrl = storyteller.profileImage || getFallbackImage(storyteller.id);
+  // Only show cards for storytellers who have a profile image
+  if (!storyteller.profileImage) {
+    return null;
+  }
   
   return (
     <Link href={`/profiles/${storyteller.id}`} style={{ textDecoration: 'none' }}>
@@ -63,10 +58,9 @@ export function StorytellerCard({ storyteller }: StorytellerCardProps) {
           position: 'relative', 
           overflow: 'hidden'
         }}>
-          <ProfileImage
-            src={imageUrl}
+          <img
+            src={storyteller.profileImage}
             alt={storyteller.name}
-            fallbackSrc={getFallbackImage(storyteller.id)}
             style={{
               width: '100%',
               height: '100%',

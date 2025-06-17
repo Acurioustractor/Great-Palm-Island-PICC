@@ -27,9 +27,11 @@ export default async function VideosPage() {
   const storytellersResult = await StaticApi.getStorytellers();
   const storytellers = storytellersResult?.data || [];
   
-  // Filter for storytellers with story content (these are the "stories" with videos)
+  // Filter for storytellers with story content and profile images
   const storiesWithContent = storytellers.filter(storyteller => 
-    storyteller.storyContent && storyteller.storyContent.trim().length > 0
+    storyteller.storyContent && 
+    storyteller.storyContent.trim().length > 0 &&
+    storyteller.profileImage // Only include those with profile images
   );
 
 
@@ -90,17 +92,6 @@ export default async function VideosPage() {
             <div className={videoStyles.videoGrid}>
               {storiesWithContent.map((story, index) => {
                 const displayName = story.name;
-                
-                // Use a deterministic fallback based on storyteller ID
-                const getFallbackImage = (id: string) => {
-                  const hash = id.split('').reduce((acc, char) => {
-                    return char.charCodeAt(0) + ((acc << 5) - acc);
-                  }, 0);
-                  const imageIndex = (Math.abs(hash) % 54) + 1;
-                  return `/gallery/Photo${imageIndex}.jpg`;
-                };
-                
-                const thumbnailUrl = story.profileImage || getFallbackImage(story.id);
 
                 return (
                   <Link 
@@ -111,12 +102,14 @@ export default async function VideosPage() {
                     <div className={videoStyles.videoCard}>
                       {/* Story Thumbnail */}
                       <div className={videoStyles.videoThumbnail}>
-                        <ProfileImage
-                          src={thumbnailUrl}
+                        <img
+                          src={story.profileImage}
                           alt={displayName}
-                          fallbackSrc={getFallbackImage(story.id)}
-                          fill
-                          style={{ objectFit: 'cover' }}
+                          style={{ 
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover' 
+                          }}
                         />
                         
                         {/* Story indicator overlay */}
