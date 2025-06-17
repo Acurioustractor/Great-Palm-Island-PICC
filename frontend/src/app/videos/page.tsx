@@ -157,7 +157,7 @@ export default async function VideosPage() {
               })}
             </div>
 
-            {videos.length === 0 && !loading && (
+            {videosData.length === 0 && (
               <div style={{ 
                 textAlign: 'center', 
                 padding: '60px 20px',
