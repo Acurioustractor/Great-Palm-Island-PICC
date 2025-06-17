@@ -6,19 +6,6 @@ export default async function EnhancedStoriesPage() {
     const stories = await StaticApi.getStorytellers({ limit: 50 });
     const storytellers = stories?.data || [];
     
-    // Gallery images for fallbacks
-    const galleryImages = Array.from({length: 54}, (_, i) => `/gallery/Photo${i + 1}.jpg`);
-    
-    // Function to get a stable fallback image for each storyteller
-    const getFallbackImage = (storytellerId: string) => {
-      const hash = storytellerId.split('').reduce((a, b) => {
-        a = ((a << 5) - a) + b.charCodeAt(0);
-        return a & a;
-      }, 0);
-      const index = Math.abs(hash) % galleryImages.length;
-      return galleryImages[index];
-    };
-    
     return (
       <>
         <div className={sharedStyles.hero}>
@@ -40,19 +27,18 @@ export default async function EnhancedStoriesPage() {
             gap: '2rem',
             marginTop: '2rem'
           }}>
-            {storytellers.slice(0, 6).map((story) => {
-              const imageToShow = story.profileImage || getFallbackImage(story.id);
-              return (
-                <div key={story.id} style={{
-                  background: 'white',
-                  padding: '1.5rem',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}>
+            {storytellers.slice(0, 6).map((story) => (
+              <div key={story.id} style={{
+                background: 'white',
+                padding: '1.5rem',
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                {story.profileImage && (
                   <img 
-                    src={imageToShow} 
+                    src={story.profileImage} 
                     alt={story.name}
                     style={{
                       width: '100%',
@@ -62,6 +48,7 @@ export default async function EnhancedStoriesPage() {
                       marginBottom: '1rem'
                     }}
                   />
+                )}
                 <h3 style={{ color: '#19466C', marginBottom: '0.5rem' }}>
                   {story.storyTitle || `${story.name}'s Story`}
                 </h3>
@@ -77,9 +64,8 @@ export default async function EnhancedStoriesPage() {
                     story.bio
                   }
                 </p>
-                </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </>
