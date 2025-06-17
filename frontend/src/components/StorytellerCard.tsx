@@ -26,11 +26,6 @@ interface StorytellerCardProps {
 }
 
 export function StorytellerCard({ storyteller }: StorytellerCardProps) {
-  // Only show cards for storytellers who have a profile image
-  if (!storyteller.profileImage) {
-    return null;
-  }
-  
   return (
     <Link href={`/profiles/${storyteller.id}`} style={{ textDecoration: 'none' }}>
       <div
@@ -56,17 +51,60 @@ export function StorytellerCard({ storyteller }: StorytellerCardProps) {
           width: '100%', 
           height: '250px',
           position: 'relative', 
-          overflow: 'hidden'
+          overflow: 'hidden',
+          background: '#E8F2F9',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}>
-          <img
-            src={storyteller.profileImage}
-            alt={storyteller.name}
-            style={{
-              width: '100%',
+          {storyteller.profileImage ? (
+            <img
+              src={storyteller.profileImage}
+              alt={storyteller.name}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+              onError={(e) => {
+                // Hide the image and show placeholder when it fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const container = target.parentElement;
+                if (container) {
+                  container.innerHTML = `
+                    <div style="
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: center;
+                      height: 100%;
+                      color: #19466C;
+                      text-align: center;
+                      padding: 20px;
+                    ">
+                      <div style="font-size: 3rem; margin-bottom: 8px;">👤</div>
+                      <div style="font-weight: 600;">${storyteller.name}</div>
+                    </div>
+                  `;
+                }
+              }}
+            />
+          ) : (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
               height: '100%',
-              objectFit: 'cover',
-            }}
-          />
+              color: '#19466C',
+              textAlign: 'center',
+              padding: '20px'
+            }}>
+              <div style={{ fontSize: '3rem', marginBottom: '8px' }}>👤</div>
+              <div style={{ fontWeight: 600 }}>{storyteller.name}</div>
+            </div>
+          )}
         </div>
         <div style={{ 
           padding: '24px',

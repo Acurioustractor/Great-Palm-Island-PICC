@@ -3,7 +3,7 @@ import Image from 'next/image';
 import styles from '@/styles/shared.module.css';
 import videoStyles from '@/styles/videos.module.css';
 import { StaticApi } from '@/lib/staticApi';
-import { ProfileImage } from '@/components/ProfileImage';
+import { StoryCard2 } from '@/components/StoryCard2';
 
 interface Storyteller {
   id: string;
@@ -27,11 +27,10 @@ export default async function VideosPage() {
   const storytellersResult = await StaticApi.getStorytellers();
   const storytellers = storytellersResult?.data || [];
   
-  // Filter for storytellers with story content and profile images
+  // Filter for storytellers with story content
   const storiesWithContent = storytellers.filter(storyteller => 
     storyteller.storyContent && 
-    storyteller.storyContent.trim().length > 0 &&
-    storyteller.profileImage // Only include those with profile images
+    storyteller.storyContent.trim().length > 0
   );
 
 
@@ -90,73 +89,9 @@ export default async function VideosPage() {
             </section>
 
             <div className={videoStyles.videoGrid}>
-              {storiesWithContent.map((story, index) => {
-                const displayName = story.name;
-
-                return (
-                  <Link 
-                    key={story.id} 
-                    href={`/stories-enhanced/${story.id}`}
-                    style={{ textDecoration: 'none' }}
-                  >
-                    <div className={videoStyles.videoCard}>
-                      {/* Story Thumbnail */}
-                      <div className={videoStyles.videoThumbnail}>
-                        <img
-                          src={story.profileImage}
-                          alt={displayName}
-                          style={{ 
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover' 
-                          }}
-                        />
-                        
-                        {/* Story indicator overlay */}
-                        <div className={videoStyles.playButton}>
-                          📖
-                        </div>
-
-                        {/* Story badge */}
-                        <div className={videoStyles.videoBadge}>
-                          STORY
-                        </div>
-                      </div>
-
-                      {/* Story Info */}
-                      <div className={videoStyles.videoInfo}>
-                        <h3 className={videoStyles.videoTitle}>
-                          {story.storyTitle || `${displayName}'s Story`}
-                        </h3>
-
-                        <p className={videoStyles.videoRole} style={{ color: '#227D51', fontWeight: 600 }}>
-                          by {displayName}
-                        </p>
-
-                        {(story.role || story.organization) && (
-                          <p className={videoStyles.videoRole}>
-                            {story.role}
-                            {story.role && story.organization && ' • '}
-                            {story.organization}
-                          </p>
-                        )}
-
-                        {story.location && (
-                          <p className={videoStyles.videoLocation}>
-                            📍 {story.location}
-                          </p>
-                        )}
-
-                        {story.storyContent && (
-                          <p className={videoStyles.videoSummary}>
-                            {story.storyContent.length > 150 ? story.storyContent.substring(0, 150) + '...' : story.storyContent}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
+              {storiesWithContent.map((story) => (
+                <StoryCard2 key={story.id} story={story} videoStyles={videoStyles} />
+              ))}
             </div>
 
             {storiesWithContent.length === 0 && (
