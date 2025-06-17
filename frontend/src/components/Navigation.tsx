@@ -73,11 +73,11 @@ export function Navigation() {
           <Link href="/" style={linkStyle('/')}>
             Home
           </Link>
-          <Link href="/stories-enhanced" style={linkStyle('/stories-enhanced')}>
-            Stories
+          <Link href="/stories" style={linkStyle('/stories')}>
+            People
           </Link>
           <Link href="/videos" style={linkStyle('/videos')}>
-            Videos
+            Stories
           </Link>
           <Link href="/gallery" style={linkStyle('/gallery')}>
             Gallery

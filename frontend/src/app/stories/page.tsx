@@ -1,10 +1,17 @@
 import sharedStyles from '@/styles/shared.module.css';
-import { StoryCard } from '../../components/StoryCard';
 import { StaticApi } from '@/lib/staticApi';
+import { StorytellerCard } from '@/components/StorytellerCard';
 
 export default async function StoriesPage() {
   const storiesResult = await StaticApi.getStorytellers();
-  const stories = storiesResult.data;
+  const allStorytellers = storiesResult.data;
+  
+  // Filter for Palm Island storytellers
+  const palmIslandStorytellers = allStorytellers.filter(storyteller => 
+    storyteller.location === 'Palm Island' || 
+    storyteller.project?.toLowerCase().includes('palm island') ||
+    !storyteller.location // If no location specified, assume Palm Island
+  );
 
   return (
     <>
@@ -35,9 +42,9 @@ export default async function StoriesPage() {
             boxShadow: '0 8px 24px rgba(25, 70, 108, 0.2)',
           }}>
             <div style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '8px' }}>
-              {stories.length}
+              {palmIslandStorytellers.length}
             </div>
-            <div style={{ fontSize: '1.125rem', opacity: 0.9 }}>Stories Shared</div>
+            <div style={{ fontSize: '1.125rem', opacity: 0.9 }}>Palm Island Storytellers</div>
           </div>
           
           <div style={{
@@ -49,7 +56,7 @@ export default async function StoriesPage() {
             boxShadow: '0 8px 24px rgba(34, 125, 81, 0.2)',
           }}>
             <div style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '8px' }}>
-              {new Set(stories.map((s: { data?: { Project?: string } }) => s.data?.Project)).size}
+              {new Set(palmIslandStorytellers.map(s => s.project)).size}
             </div>
             <div style={{ fontSize: '1.125rem', opacity: 0.9 }}>Active Projects</div>
           </div>
@@ -63,9 +70,9 @@ export default async function StoriesPage() {
             boxShadow: '0 8px 24px rgba(139, 187, 217, 0.3)',
           }}>
             <div style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '8px' }}>
-              {new Set(stories.map((s: { data?: { Location?: string } }) => s.data?.Location)).size}
+              {palmIslandStorytellers.filter(s => s.storyContent).length}
             </div>
-            <div style={{ fontSize: '1.125rem', opacity: 0.9 }}>Locations</div>
+            <div style={{ fontSize: '1.125rem', opacity: 0.9 }}>Published Stories</div>
           </div>
         </section>
 
@@ -110,10 +117,10 @@ export default async function StoriesPage() {
           </div>
         </section>
 
-        {/* Stories Grid */}
+        {/* Storytellers Grid */}
         <section>
           <h2 className={sharedStyles.sectionTitle} style={{ marginBottom: '32px' }}>
-            Featured Storytellers
+            Palm Island Storytellers
           </h2>
           <div
             style={{
@@ -123,13 +130,13 @@ export default async function StoriesPage() {
               width: '100%',
             }}
           >
-            {stories.length === 0 && (
+            {palmIslandStorytellers.length === 0 && (
               <div className={sharedStyles.emptyState}>
-                No stories found. Please check back later.
+                No storytellers found. Please check back later.
               </div>
             )}
-            {stories.map((story: any, idx: number) => (
-              <StoryCard key={story.id} story={story} idx={idx} />
+            {palmIslandStorytellers.map((storyteller) => (
+              <StorytellerCard key={storyteller.id} storyteller={storyteller} />
             ))}
           </div>
         </section>

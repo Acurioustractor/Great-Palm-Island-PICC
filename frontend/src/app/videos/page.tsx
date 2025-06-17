@@ -27,11 +27,9 @@ export default async function VideosPage() {
   const storytellersResult = await StaticApi.getStorytellers();
   const storytellers = storytellersResult?.data || [];
   
-  // Filter for storytellers with video content
-  const videosData = storytellers.filter(storyteller => 
-    storyteller.mediaUrls && 
-    storyteller.mediaUrls.length > 0 &&
-    storyteller.mediaUrls.some(url => url && (url.includes('descript.com') || url.includes('.mp4') || url.includes('video')))
+  // Filter for storytellers with story content (these are the "stories" with videos)
+  const storiesWithContent = storytellers.filter(storyteller => 
+    storyteller.storyContent && storyteller.storyContent.trim().length > 0
   );
 
 
@@ -51,7 +49,7 @@ export default async function VideosPage() {
     <>
       <div className={videoStyles.videoPageHero}>
         <div className={videoStyles.heroContent}>
-          <h1 className={videoStyles.videoPageTitle}>Video Stories</h1>
+          <h1 className={videoStyles.videoPageTitle}>Community Stories</h1>
           <p className={videoStyles.videoPageSubtitle}>
             Powerful voices sharing their journeys, wisdom, and dreams for Great Palm Island. 
             Each story is a window into the rich tapestry of community life and cultural resilience.
@@ -60,7 +58,7 @@ export default async function VideosPage() {
       </div>
 
       <div className={styles.container}>
-        {videosData.length === 0 ? (
+        {storiesWithContent.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
             <div style={{ fontSize: '1.25rem', color: '#666', marginBottom: '16px' }}>
               No video stories found at this time.
@@ -73,10 +71,10 @@ export default async function VideosPage() {
           <>
             <section className={styles.section}>
               <div className={videoStyles.statsBar}>
-                <h3>{videosData.length} Video Stories Available</h3>
+                <h3>{storiesWithContent.length} Stories Available</h3>
                 <p>Authentic voices from the Palm Island community sharing their wisdom and experiences</p>
               </div>
-              <h2 className={styles.sectionTitle}>Community Video Stories</h2>
+              <h2 className={styles.sectionTitle}>Community Stories</h2>
               <p style={{ 
                 fontSize: '1.125rem', 
                 lineHeight: 1.6, 
@@ -84,17 +82,14 @@ export default async function VideosPage() {
                 marginBottom: '40px',
                 maxWidth: '800px'
               }}>
-                These video stories capture the authentic voices of Palm Island community members, 
+                These stories capture the authentic voices of Palm Island community members, 
                 preserving their experiences, cultural knowledge, and visions for the future.
               </p>
             </section>
 
             <div className={videoStyles.videoGrid}>
-              {videosData.map((video, index) => {
-                const videoUrl = video.mediaUrls?.find(url => 
-                  url && (url.includes('descript.com') || url.includes('.mp4') || url.includes('video'))
-                );
-                const displayName = video.name;
+              {storiesWithContent.map((story, index) => {
+                const displayName = story.name;
                 
                 // Use a deterministic fallback based on storyteller ID
                 const getFallbackImage = (id: string) => {
@@ -105,59 +100,63 @@ export default async function VideosPage() {
                   return `/gallery/Photo${imageIndex}.jpg`;
                 };
                 
-                const thumbnailUrl = video.profileImage || getFallbackImage(video.id);
+                const thumbnailUrl = story.profileImage || getFallbackImage(story.id);
 
                 return (
                   <Link 
-                    key={video.id} 
-                    href={`/videos/${video.id}`}
+                    key={story.id} 
+                    href={`/stories-enhanced/${story.id}`}
                     style={{ textDecoration: 'none' }}
                   >
                     <div className={videoStyles.videoCard}>
-                      {/* Video Thumbnail */}
+                      {/* Story Thumbnail */}
                       <div className={videoStyles.videoThumbnail}>
                         <ProfileImage
                           src={thumbnailUrl}
                           alt={displayName}
-                          fallbackSrc={getFallbackImage(video.id)}
+                          fallbackSrc={getFallbackImage(story.id)}
                           fill
                           style={{ objectFit: 'cover' }}
                         />
                         
-                        {/* Play button overlay */}
+                        {/* Story indicator overlay */}
                         <div className={videoStyles.playButton}>
-                          ▶
+                          📖
                         </div>
 
-                        {/* Video duration badge */}
+                        {/* Story badge */}
                         <div className={videoStyles.videoBadge}>
-                          VIDEO STORY
+                          STORY
                         </div>
                       </div>
 
-                      {/* Video Info */}
+                      {/* Story Info */}
                       <div className={videoStyles.videoInfo}>
                         <h3 className={videoStyles.videoTitle}>
-                          {displayName}
+                          {story.storyTitle || `${displayName}'s Story`}
                         </h3>
 
-                        {(video.role || video.organization) && (
+                        <p className={videoStyles.videoRole} style={{ color: '#227D51', fontWeight: 600 }}>
+                          by {displayName}
+                        </p>
+
+                        {(story.role || story.organization) && (
                           <p className={videoStyles.videoRole}>
-                            {video.role}
-                            {video.role && video.organization && ' • '}
-                            {video.organization}
+                            {story.role}
+                            {story.role && story.organization && ' • '}
+                            {story.organization}
                           </p>
                         )}
 
-                        {video.location && (
+                        {story.location && (
                           <p className={videoStyles.videoLocation}>
-                            📍 {video.location}
+                            📍 {story.location}
                           </p>
                         )}
 
-                        {video.bio && (
+                        {story.storyContent && (
                           <p className={videoStyles.videoSummary}>
-                            {video.bio.length > 150 ? video.bio.substring(0, 150) + '...' : video.bio}
+                            {story.storyContent.length > 150 ? story.storyContent.substring(0, 150) + '...' : story.storyContent}
                           </p>
                         )}
                       </div>
@@ -167,14 +166,14 @@ export default async function VideosPage() {
               })}
             </div>
 
-            {videosData.length === 0 && (
+            {storiesWithContent.length === 0 && (
               <div style={{ 
                 textAlign: 'center', 
                 padding: '60px 20px',
                 color: '#666'
               }}>
-                <h3 style={{ color: '#19466C', marginBottom: '16px' }}>No video stories available</h3>
-                <p>Video stories are being prepared and will be available soon.</p>
+                <h3 style={{ color: '#19466C', marginBottom: '16px' }}>No stories available</h3>
+                <p>Stories are being prepared and will be available soon.</p>
               </div>
             )}
           </>
