@@ -25,11 +25,11 @@ interface ApiResponse<T> {
 }
 
 // Import static data (this will be bundled at build time)
-import storytellersData from '../../../data/storytellers.json';
-import projectsData from '../../../data/projects.json';
-import locationsData from '../../../data/locations.json';
-import themesData from '../../../data/themes.json';
-import statsData from '../../../data/stats.json';
+import storytellersData from '../../data/storytellers.json';
+import projectsData from '../../data/projects.json';
+import locationsData from '../../data/locations.json';
+import themesData from '../../data/themes.json';
+import statsData from '../../data/stats.json';
 
 export class StaticApi {
   // Get all storytellers with optional filtering
