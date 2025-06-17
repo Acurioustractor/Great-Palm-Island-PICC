@@ -4,15 +4,17 @@ import Link from 'next/link';
 import { EnhancedStoriesClient } from '@/components/EnhancedStoriesClient';
 
 export default async function EnhancedStoriesPage() {
-  const [stats, stories, themes] = await Promise.all([
-    StaticApi.getStats(),
-    StaticApi.getStorytellers({ limit: 50 }),
-    StaticApi.getThemes()
-  ]);
+  try {
+    const [stats, stories, themes] = await Promise.all([
+      StaticApi.getStats(),
+      StaticApi.getStorytellers({ limit: 50 }),
+      StaticApi.getThemes()
+    ]);
 
-  // Get unique projects and locations for filtering  
-  const projects = [...new Set(stories.data.map(s => s.project).filter(Boolean))];
-  const locations = [...new Set(stories.data.map(s => s.location).filter(Boolean))];
+    // Get unique projects and locations for filtering with safe checks
+    const storytellers = stories?.data || [];
+    const projects = [...new Set(storytellers.map(s => s?.project).filter(Boolean))];
+    const locations = [...new Set(storytellers.map(s => s?.location).filter(Boolean))];
 
   return (
     <>
@@ -28,7 +30,7 @@ export default async function EnhancedStoriesPage() {
 
       <div className={sharedStyles.container}>
         {/* Stats Section */}
-        {stats && (
+        {stats?.data && (
           <section style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
@@ -44,7 +46,7 @@ export default async function EnhancedStoriesPage() {
               boxShadow: '0 8px 24px rgba(25, 70, 108, 0.2)',
             }}>
               <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '8px' }}>
-                {stats.data.totalStorytellers}
+                {stats?.data?.totalStorytellers || 0}
               </div>
               <div style={{ fontSize: '1rem', opacity: 0.9 }}>Stories Shared</div>
             </div>
@@ -58,7 +60,7 @@ export default async function EnhancedStoriesPage() {
               boxShadow: '0 8px 24px rgba(34, 125, 81, 0.2)',
             }}>
               <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '8px' }}>
-                {stats.data.totalStorytellers}
+                {stats?.data?.totalStorytellers || 0}
               </div>
               <div style={{ fontSize: '1rem', opacity: 0.9 }}>Storytellers</div>
             </div>
@@ -72,7 +74,7 @@ export default async function EnhancedStoriesPage() {
               boxShadow: '0 8px 24px rgba(139, 187, 217, 0.3)',
             }}>
               <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '8px' }}>
-                {stats.data.totalProjects}
+                {stats?.data?.totalProjects || 0}
               </div>
               <div style={{ fontSize: '1rem', opacity: 0.9 }}>Projects</div>
             </div>
@@ -86,7 +88,7 @@ export default async function EnhancedStoriesPage() {
               boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
             }}>
               <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '8px' }}>
-                {stats.data.totalThemes}
+                {stats?.data?.totalThemes || 0}
               </div>
               <div style={{ fontSize: '1rem', opacity: 0.9 }}>Themes</div>
             </div>
@@ -106,7 +108,7 @@ export default async function EnhancedStoriesPage() {
             <div>
               <h3 style={{ color: '#19466C', marginBottom: '12px' }}>Filter by Project</h3>
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                {projects.map((project) => (
+                {projects.map((project) => project && (
                   <Link
                     key={project}
                     href={`/stories-enhanced?project=${encodeURIComponent(project)}`}
@@ -133,7 +135,7 @@ export default async function EnhancedStoriesPage() {
         </section>
 
         {/* Stories Grid */}
-        <EnhancedStoriesClient stories={stories.data} />
+        <EnhancedStoriesClient stories={storytellers} />
 
         {/* Call to Action */}
         <section style={{ 
@@ -183,4 +185,13 @@ export default async function EnhancedStoriesPage() {
       </div>
     </>
   );
+  } catch (error) {
+    console.error('Error loading stories page:', error);
+    return (
+      <div className={sharedStyles.container}>
+        <h1>Error Loading Stories</h1>
+        <p>We&apos;re having trouble loading the stories. Please try again later.</p>
+      </div>
+    );
+  }
 }
