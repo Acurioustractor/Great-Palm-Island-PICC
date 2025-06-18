@@ -183,6 +183,22 @@
   to { transform: rotate(360deg); }
 }
 
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .videoPageHero {
+    padding: 120px 20px 80px 20px; /* Extra top padding to account for fixed nav */
+  }
+  
+  .videoPageTitle {
+    font-size: 2.5rem !important;
+  }
+  
+  .videoGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
 .emptyState {
   text-align: center;
   padding: 80px 20px;

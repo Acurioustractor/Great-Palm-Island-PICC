@@ -92,6 +92,9 @@ export function Navigation() {
       </div>
       <style jsx>{`
         @media (max-width: 768px) {
+          nav {
+            padding: 12px 0 !important; /* Slightly smaller padding on mobile */
+          }
           .mobile-menu-toggle {
             display: block !important;
           }
