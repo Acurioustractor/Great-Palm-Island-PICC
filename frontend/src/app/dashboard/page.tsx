@@ -121,6 +121,40 @@ const PalmIslandStorytellerDashboard = () => {
             ? imageData.width / imageData.height < 0.8
             : false;
 
+          // Extract a meaningful quote
+          let quote = storyteller.data['Personal Quote'];
+          
+          // If no personal quote, extract from summary or bio
+          if (!quote || quote === 'null') {
+            const summary = storyteller.data['Summary (from Media)']?.[0];
+            if (summary) {
+              // Extract the most impactful part of the summary
+              const sentences = summary.split('.');
+              if (sentences.length > 1) {
+                // Take a meaningful sentence from the middle or end
+                quote = sentences[sentences.length - 2]?.trim() + '.' || sentences[0]?.trim() + '.';
+              } else {
+                quote = summary;
+              }
+            } else if (storyteller.bio) {
+              // Extract from bio
+              const bioSentences = storyteller.bio.split('.');
+              const impactfulSentence = bioSentences.find(s => 
+                s.includes('highlighting') || 
+                s.includes('emphasiz') || 
+                s.includes('appreciate') ||
+                s.includes('value') ||
+                s.includes('importance')
+              );
+              quote = impactfulSentence?.trim() + '.' || bioSentences[0]?.trim() + '.';
+            } else {
+              quote = 'Sharing wisdom and experiences from Palm Island.';
+            }
+          } else {
+            // Clean up existing quotes
+            quote = quote.replace(/"/g, '');
+          }
+
           return {
             id: storyteller.id,
             name: storyteller.data['Preferred Name'] || storyteller.name,
@@ -134,7 +168,7 @@ const PalmIslandStorytellerDashboard = () => {
             emotionalResonance,
             vision: generateVision(storyteller),
             strengths,
-            quote: storyteller.data['Personal Quote'] || 'Contributing to our community story',
+            quote,
             bio: storyteller.bio || 'Community storyteller sharing their experiences and wisdom.',
             dateRecorded: storyteller.data?.['Created At'] || new Date().toISOString()
           };
@@ -734,7 +768,7 @@ const PalmIslandStorytellerDashboard = () => {
                   </div>
                 </div>
                 <blockquote className={styles.cardQuote}>
-                  &ldquo;{storyteller.quote}&rdquo;
+                  &ldquo;{storyteller.quote.length > 120 ? storyteller.quote.slice(0, 117) + '...' : storyteller.quote}&rdquo;
                 </blockquote>
               </div>
             </div>
