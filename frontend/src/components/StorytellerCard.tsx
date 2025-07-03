@@ -26,6 +26,11 @@ interface StorytellerCardProps {
 }
 
 export function StorytellerCard({ storyteller }: StorytellerCardProps) {
+  // Detect if profile image is portrait
+  const isPortrait = storyteller.metadata?.['File Profile Image']?.[0]?.width && storyteller.metadata?.['File Profile Image']?.[0]?.height
+    ? storyteller.metadata['File Profile Image'][0].width / storyteller.metadata['File Profile Image'][0].height < 0.8
+    : false;
+
   return (
     <Link href={`/profiles/${storyteller.id}`} style={{ textDecoration: 'none' }}>
       <div
@@ -65,6 +70,7 @@ export function StorytellerCard({ storyteller }: StorytellerCardProps) {
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
+                objectPosition: isPortrait ? '50% 35%' : 'center',
               }}
               onError={(e) => {
                 // Hide the image and show placeholder when it fails to load

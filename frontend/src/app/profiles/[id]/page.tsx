@@ -12,6 +12,11 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
   const profile = profileResult.data;
   const { name, bio, profileImage, role, organization, location, project, themes, tags } = profile;
 
+  // Detect if profile image is portrait
+  const isPortrait = profile.metadata?.['File Profile Image']?.[0]?.width && profile.metadata?.['File Profile Image']?.[0]?.height
+    ? profile.metadata['File Profile Image'][0].width / profile.metadata['File Profile Image'][0].height < 0.8
+    : false;
+
   return (
     <>
       <div className={styles.hero}>
@@ -47,7 +52,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                 fill
                 style={{
                   objectFit: 'cover',
-                  objectPosition: 'center'
+                  objectPosition: isPortrait ? '50% 35%' : 'center'
                 }}
                 priority
               />

@@ -86,7 +86,7 @@ export function StoryCard({ story, idx }: StoryCardProps) {
           fill
           style={{ 
             objectFit: 'cover',
-            objectPosition: isPortrait ? '50% 25%' : 'center',
+            objectPosition: isPortrait ? '50% 35%' : 'center',
             transition: 'transform 0.3s ease'
           }}
           sizes="(max-width: 600px) 100vw, 33vw"

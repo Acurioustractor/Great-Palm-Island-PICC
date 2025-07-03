@@ -34,7 +34,7 @@
 
 @media (max-width: 768px) {
   .hero {
-    padding: 120px 20px 80px 20px; /* Extra top padding to account for fixed nav */
+    padding: 160px 20px 80px 20px; /* Extra top padding to account for fixed nav */
   }
   
   .container {

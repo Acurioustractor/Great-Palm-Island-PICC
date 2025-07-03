@@ -108,7 +108,7 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
                   fill
                   style={{
                     objectFit: 'cover',
-                    objectPosition: isPortrait ? '50% 25%' : 'center'
+                    objectPosition: isPortrait ? '50% 35%' : 'center'
                   }}
                   priority
                 />
