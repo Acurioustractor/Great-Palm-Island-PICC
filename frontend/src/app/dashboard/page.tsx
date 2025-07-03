@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Users, Target, Compass, BookOpen, Waves, Star, MapPin, GraduationCap, Lightbulb, TreePine, Building2, BarChart3, Calendar, Globe, Filter } from 'lucide-react';
 import styles from '@/styles/dashboard.module.css';
 import { StaticApi } from '@/lib/staticApi';
+import Image from 'next/image';
 
 interface StorytellertData {
   id: string;
@@ -44,6 +45,7 @@ interface ProcessedStoryteller {
   bio: string;
   fallbackImage?: string;
   dateRecorded?: string;
+  isPortrait?: boolean;
 }
 
 interface ProjectStats {
@@ -113,6 +115,12 @@ const PalmIslandStorytellerDashboard = () => {
           // Generate strengths from available data
           const strengths = generateStrengths(storyteller);
 
+          // Check if image is portrait
+          const imageData = storyteller.data['File Profile Image']?.[0];
+          const isPortrait = imageData?.width && imageData?.height
+            ? imageData.width / imageData.height < 0.8
+            : false;
+
           return {
             id: storyteller.id,
             name: storyteller.data['Preferred Name'] || storyteller.name,
@@ -122,6 +130,7 @@ const PalmIslandStorytellerDashboard = () => {
             project: storyteller.data.Project || 'PICC',
             image: storyteller.data['File Profile Image']?.[0]?.url || '',
             fallbackImage: galleryImages[index % galleryImages.length],
+            isPortrait,
             emotionalResonance,
             vision: generateVision(storyteller),
             strengths,
@@ -432,16 +441,25 @@ const PalmIslandStorytellerDashboard = () => {
               <div className={styles.miniStorytellersGrid}>
                 {projectStorytellers.slice(0, 3).map((storyteller) => (
                   <div key={storyteller.id} className={styles.miniStorytellerCard}>
-                    <img 
-                      src={storyteller.image || storyteller.fallbackImage} 
-                      alt={storyteller.name}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        if (target.src !== storyteller.fallbackImage) {
-                          target.src = storyteller.fallbackImage || '/gallery/Photo1.jpg';
-                        }
-                      }}
-                    />
+                    <div className={styles.miniImageContainer}>
+                      <Image 
+                        src={storyteller.image || storyteller.fallbackImage} 
+                        alt={storyteller.name}
+                        fill
+                        style={{ 
+                          objectFit: 'cover',
+                          objectPosition: storyteller.isPortrait ? '50% 35%' : 'center'
+                        }}
+                        sizes="60px"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          if (target.src !== storyteller.fallbackImage) {
+                            target.src = storyteller.fallbackImage || '/gallery/Photo1.jpg';
+                          }
+                        }}
+                        unoptimized={!!storyteller.image}
+                      />
+                    </div>
                     <div>
                       <h5>{storyteller.name}</h5>
                       <p>{storyteller.role}</p>
@@ -669,17 +687,25 @@ const PalmIslandStorytellerDashboard = () => {
               className={`${styles.storytellerCard} ${getTierClass(storyteller.tier)}`}
               onClick={() => setSelectedStoryteller(storyteller)}
             >
-              <img 
-                src={storyteller.image || storyteller.fallbackImage} 
-                alt={storyteller.name}
-                className={styles.cardImage}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  if (target.src !== storyteller.fallbackImage) {
-                    target.src = storyteller.fallbackImage || '/gallery/Photo1.jpg';
-                  }
-                }}
-              />
+              <div className={styles.cardImageContainer}>
+                <Image 
+                  src={storyteller.image || storyteller.fallbackImage} 
+                  alt={storyteller.name}
+                  fill
+                  style={{ 
+                    objectFit: 'cover',
+                    objectPosition: storyteller.isPortrait ? '50% 35%' : 'center'
+                  }}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target.src !== storyteller.fallbackImage) {
+                      target.src = storyteller.fallbackImage || '/gallery/Photo1.jpg';
+                    }
+                  }}
+                  unoptimized={!!storyteller.image}
+                />
+              </div>
               <div className={styles.cardContent}>
                 <div className={styles.cardTop}>
                   <h3 className={styles.storytellerName}>{storyteller.name}</h3>
@@ -781,17 +807,25 @@ const PalmIslandStorytellerDashboard = () => {
             
             <div className={styles.modalGrid}>
               <div>
-                <img 
-                  src={selectedStoryteller.image || selectedStoryteller.fallbackImage} 
-                  alt={selectedStoryteller.name}
-                  className={styles.modalImage}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    if (target.src !== selectedStoryteller.fallbackImage) {
-                      target.src = selectedStoryteller.fallbackImage || '/gallery/Photo1.jpg';
-                    }
-                  }}
-                />
+                <div className={styles.modalImageContainer}>
+                  <Image 
+                    src={selectedStoryteller.image || selectedStoryteller.fallbackImage} 
+                    alt={selectedStoryteller.name}
+                    fill
+                    style={{ 
+                      objectFit: 'cover',
+                      objectPosition: selectedStoryteller.isPortrait ? '50% 35%' : 'center'
+                    }}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (target.src !== selectedStoryteller.fallbackImage) {
+                        target.src = selectedStoryteller.fallbackImage || '/gallery/Photo1.jpg';
+                      }
+                    }}
+                    unoptimized={!!selectedStoryteller.image}
+                  />
+                </div>
                 <div className={`${styles.overviewCard} ${getTierClass(selectedStoryteller.tier)}`}>
                   <h3 className={styles.cardTitle}>{selectedStoryteller.tier}</h3>
                   <p className={styles.role}>{selectedStoryteller.role}</p>
